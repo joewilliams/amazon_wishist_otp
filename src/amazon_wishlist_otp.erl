@@ -35,7 +35,7 @@
     end)()).
 
 %% API
--export([start_link/0,get_wishlist/1]).
+-export([start_link/0]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
@@ -77,24 +77,9 @@ init([]) ->
 %%                                      {stop, Reason, State}
 %% Description: Handling call messages
 %%--------------------------------------------------------------------
-handle_call({get_wishlist, Email_addr}, _From, State) ->
-	%% Frist built the URL for your account and make a request
-	List_id_url = ?LIST_ID_URL ++ Email_addr,
-	{ ok, { _Status, _Headers, Body }} = http:request(List_id_url),
-	%% This checks the server status
-	check_status(_Status),
-	%% Parse the XML to get your wishlist IDs
-	{ Xml, _Rest } = xmerl_scan:string(Body),
-	List_id = ?Val(xmerl_xpath:string("//ListId", Xml)),
-	%% Build the wishlist URL and make a request
-	List_url = ?LIST_URL ++ List_id,
-	{ ok, { _Status1, _Headers1, Body1 }} = http:request(List_url),
-	check_status(_Status1),
-	%% Parse the XML to get the names of the items
-	{ Xml1, _Rest1 } = xmerl_scan:string(Body1),
-	Titles = ?Val(xmerl_xpath:string("//Title", Xml1)),
-	%Reply back with the list of titles
-	Reply = [ [T] || T <- Titles ],
+handle_call(Email_addr, _From, State) ->
+	%Reply back with the result from get_wishlist
+	Reply = get_wishlist(Email_addr),
     {reply, Reply, State}.
 
 %%--------------------------------------------------------------------
@@ -136,6 +121,20 @@ code_change(_OldVsn, State, _Extra) ->
 %%% Internal functions
 %%--------------------------------------------------------------------
 
+build_list_id(Email_addr) ->
+	List_id_url = ?LIST_ID_URL ++ Email_addr,
+	{ ok, { _Status, _Headers, Body }} = http:request(List_id_url),
+	check_status(_Status),
+	{ Xml, _Rest } = xmerl_scan:string(Body),
+	?Val(xmerl_xpath:string("//ListId", Xml)).
+	
+build_wishlist(List_id) ->
+	List_url = ?LIST_URL ++ List_id,
+	{ ok, { _Status, _Headers, Body }} = http:request(List_url),
+	check_status(_Status),
+	{ Xml, _Rest } = xmerl_scan:string(Body),
+	Titles = ?Val(xmerl_xpath:string("//Title", Xml)),
+	[ T || T <- Titles].
 
 check_status(_Status) ->
 	case _Status of
@@ -147,5 +146,5 @@ check_status(_Status) ->
 	end.
 	
 get_wishlist(Email_addr) ->
-	gen_server:call(?MODULE, {get_wishlist, Email_addr}).
+	lists:map(fun build_wishlist/1, build_list_id(Email_addr)).
 
