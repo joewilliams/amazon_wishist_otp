@@ -1,0 +1,28 @@
+amazon wishlist otp : an amazon wishlist app that uses Erlang/OTP
+
+Usage:
+
+[user@host ebin]$ erl
+Erlang (BEAM) emulator version 5.6.5 [source] [64-bit] [smp:2] [async-threads:0] [hipe] [kernel-poll:false]
+
+Eshell V5.6.5  (abort with ^G)
+1> amazon_wishlist_otp:start_link().
+ok
+2> amazon_wishlist_otp:get_wishlist("williams.joe@gmail.com").
+[["Algorithms on Strings, Trees and Sequences: Computer Science and Computational Biology",
+  "Algorithms: Sequential, Parallel, and Distributed",
+  "Starting Forth: An Introduction to the Forth Language and Operating System for Beginners and Professionals (Prentice-Hall Software Series)",
+  "Biobazaar: The Open Source Revolution and Biotechnology",
+  "Nmap Network Scanning: The Official Nmap Project Guide to Network Discovery and Security Scanning",
+  "American Nerd: The Story of My People",
+  "FreeDarko presents The Macrophenomenal Pro Basketball Almanac: Styles, Stats, and Stars in Today's Game",
+  "CP Technologie USB TO SERIAL ADAPTER ( CP-US-03 )",
+  "Made to Stick: Why Some Ideas Survive and Others Die",
+  "The Myths of Innovation"]]
+
+
+API:
+
+start_link()
+
+get_wishlist(Email_addr)
