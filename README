@@ -8,7 +8,7 @@ Erlang (BEAM) emulator version 5.6.5 [source] [64-bit] [smp:2] [async-threads:0]
 Eshell V5.6.5  (abort with ^G)
 1> amazon_wishlist_otp:start_link().
 ok
-2> amazon_wishlist_otp:get_wishlist("williams.joe@gmail.com").
+2> amazon_wishlist_otp:get_wishlist("SOMEEMAILADDR").
 [["Algorithms on Strings, Trees and Sequences: Computer Science and Computational Biology",
   "Algorithms: Sequential, Parallel, and Distributed",
   "Starting Forth: An Introduction to the Forth Language and Operating System for Beginners and Professionals (Prentice-Hall Software Series)",
