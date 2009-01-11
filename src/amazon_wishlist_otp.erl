@@ -35,7 +35,7 @@
     end)()).
 
 %% API
--export([start_link/0]).
+-export([start_link/0,get_wishlist/1]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
@@ -79,7 +79,7 @@ init([]) ->
 %%--------------------------------------------------------------------
 handle_call(Email_addr, _From, State) ->
 	%Reply back with the result from get_wishlist
-	Reply = get_wishlist(Email_addr),
+	Reply = lists:map(fun build_wishlist/1, build_list_id(Email_addr)),
     {reply, Reply, State}.
 
 %%--------------------------------------------------------------------
@@ -146,5 +146,5 @@ check_status(_Status) ->
 	end.
 	
 get_wishlist(Email_addr) ->
-	lists:map(fun build_wishlist/1, build_list_id(Email_addr)).
+	gen_server:call(?SERVER, Email_addr).
 
